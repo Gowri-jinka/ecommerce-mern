@@ -124,3 +124,22 @@ npm run dev
 ## ⭐ Acknowledgement
 
 This project was built as part of learning full-stack web development.
+
+
+##  OUTPUTS 
+##  SignUp Page
+<img width="1919" height="961" alt="image" src="https://github.com/user-attachments/assets/ab40d62f-6fe9-4cfe-b47f-0d9dd2a0ad1e" />
+
+## Login Page 
+<img width="1919" height="969" alt="image" src="https://github.com/user-attachments/assets/8408a6fa-9808-4683-9366-5cfcbab4c86d" />
+## OTP verification
+<img width="1919" height="962" alt="image" src="https://github.com/user-attachments/assets/51d70e3c-4b57-4dae-9a0e-90161aa14acc" />
+<img width="1918" height="962" alt="image" src="https://github.com/user-attachments/assets/b4adc6d1-66de-4edc-b10d-1e7ce0444ce3" />
+##  home Page
+<img width="1919" height="958" alt="image" src="https://github.com/user-attachments/assets/b191210f-65fa-47d2-8a4e-a9f3d97c8b2b" />
+##  Wishlist page
+<img width="1919" height="962" alt="image" src="https://github.com/user-attachments/assets/d68f0df7-e63e-40b3-945f-4b69923648ff" />
+##  Cart Page
+<img width="1919" height="967" alt="image" src="https://github.com/user-attachments/assets/51c5475c-46de-4883-b2d3-ff47410f24cf" />
+##  Profile Page 
+<img width="1919" height="969" alt="image" src="https://github.com/user-attachments/assets/e01357e3-096b-4d24-a818-c2be86aa0bc0" />
