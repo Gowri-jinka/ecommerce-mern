@@ -46,7 +46,7 @@ This is a full-stack ecommerce web application built using the MERN stack (Mongo
 
 * React.js
 * Vite
-* CSS / Bootstrap
+* CSS
 
 ### Backend:
 
@@ -94,7 +94,7 @@ npm run dev
 ```
 cd backend
 npm install
-npm run dev
+node server.js
 ```
 
 ---
