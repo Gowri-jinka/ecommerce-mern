@@ -1,8 +1,6 @@
 import nodemailer from "nodemailer";
-
 const sendTest = async () => {
   console.log(" Sending test mail...");
-
   try {
     const testAccount = await nodemailer.createTestAccount();   //creates temporary email credentials
 

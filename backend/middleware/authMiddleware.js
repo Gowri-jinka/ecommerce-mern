@@ -4,7 +4,7 @@ export const protect = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
-    console.log("AUTH HEADER:", authHeader); // 🔥 DEBUG
+    console.log("AUTH HEADER:", authHeader);
 
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
       return res.status(401).json({ msg: "No token provided" });

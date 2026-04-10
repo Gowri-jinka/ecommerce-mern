@@ -78,16 +78,6 @@ export default function ProductCard({ product }) {
 
 /* STYLES */
 
-const cardStyle = {
-  borderRadius: "16px",
-  overflow: "hidden",
-  background: "rgba(255,255,255,0.9)",
-  backdropFilter: "blur(10px)",
-  boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-  cursor: "pointer",
-  width: "230px",
-  transition: "all 0.3s ease"
-};
 
 const imgStyle = {
   width: "100%",
@@ -142,4 +132,35 @@ const btnWish = {
   borderRadius: "8px",
   cursor: "pointer",
   transition: "0.2s"
+};
+
+const cardStyle = {
+  background: "var(--card-bg)",
+  borderRadius: "16px",
+  padding: "15px",
+  boxShadow: "0 8px 25px rgba(0,0,0,0.1)",
+  transition: "all 0.3s ease",
+  cursor: "pointer"
+};
+
+const hoverStyle = {
+  transform: "translateY(-8px)",
+  boxShadow: "0 12px 35px rgba(0,0,0,0.2)"
+};
+
+const primaryBtn = {
+  background: "var(--accent)",
+  border: "none",
+  padding: "10px",
+  borderRadius: "8px",
+  color: "#fff",
+  fontWeight: "bold",
+  cursor: "pointer"
+};
+
+const secondaryBtn = {
+  background: "#111",
+  color: "#fff",
+  borderRadius: "8px",
+  padding: "10px",
 };

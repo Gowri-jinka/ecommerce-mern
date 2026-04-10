@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 
-// ✅ GET PROFILE
+// GET PROFILE
 export const getProfile = async (req, res) => {
   try {
     const user = await User.findById(req.user.id).select("-password");
@@ -19,7 +19,7 @@ export const getProfile = async (req, res) => {
 };
 
 
-// ✅ UPDATE PROFILE
+//  UPDATE PROFILE
 export const updateProfile = async (req, res) => {
   try {
     const { name, email, password, phone, address, profilePic } = req.body;
@@ -30,17 +30,17 @@ export const updateProfile = async (req, res) => {
       return res.status(404).json({ msg: "User not found" });
     }
 
-    // 🔥 BASIC FIELDS
+    // BASIC FIELDS
     if (name) user.name = name;
     if (email) user.email = email;
 
-    // 🔐 PASSWORD UPDATE
+    //  PASSWORD UPDATE
     if (password) {
       const hashed = await bcrypt.hash(password, 10);
       user.password = hashed;
     }
 
-    // 🔥 EXTRA FIELDS
+    //  EXTRA FIELDS
     if (phone) user.phone = phone;
     if (address) user.address = address;
     if (profilePic) user.profilePic = profilePic;

@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useContext } from "react"; // ✅ updated
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
+import { ThemeContext } from "../context/ThemeContext"; // ✅ ADDED
 
 export default function Navbar({ setCategory }) {
   const [show, setShow] = useState(false);
@@ -16,7 +17,8 @@ export default function Navbar({ setCategory }) {
 
   const navigate = useNavigate();
 
-  // 🔥 Close dropdown when clicking outside
+  const { toggleTheme } = useContext(ThemeContext); // ✅ ADDED
+
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (
@@ -39,24 +41,20 @@ export default function Navbar({ setCategory }) {
   }, []);
 
   return (
-    <div style={navStyle}>
-      {/* LOGO */}
+    <div style={{ ...navStyle, background: "var(--nav-bg)", color: "var(--nav-text)" }}>
       <Link to="/" style={logoStyle}>
         EdisonKart
       </Link>
 
       <div style={menu}>
-        {/* HOME */}
         <Link to="/" onClick={() => setCategory("")} style={linkStyle}>
           Home
         </Link>
 
-        {/* WISHLIST */}
         <span onClick={() => navigate("/wishlist")} style={linkStyle}>
           ❤️ Wishlist
         </span>
 
-        {/* SHOP DROPDOWN */}
         <div style={{ position: "relative" }} ref={dropdownRef}>
           <span
             style={linkStyle}
@@ -74,12 +72,24 @@ export default function Navbar({ setCategory }) {
           )}
         </div>
 
-        {/* CART */}
         <Link to="/cart" style={linkStyle}>
           Cart ({cart.length})
         </Link>
 
-        {/* PROFILE */}
+        {/* ✅ THEME BUTTON ADDED */}
+        <button
+  onClick={toggleTheme}
+  style={{
+    background: "var(--card-bg)",
+    border: "none",
+    padding: "6px 12px",
+    borderRadius: "20px",
+    cursor: "pointer"
+  }}
+>
+  🌙 | ☀️
+</button>
+
         {user ? (
           <div style={{ position: "relative" }} ref={profileRef}>
             <span
@@ -110,16 +120,8 @@ export default function Navbar({ setCategory }) {
   );
 }
 
-/* 🔥 STYLES */
+/* 🔥 ORIGINAL STYLES (NOT REMOVED) */
 
-const navStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: "15px 30px",
-  background: "#111",
-  color: "#fff"
-};
 
 const logoStyle = {
   color: "#fff",
@@ -164,4 +166,14 @@ const profileDropdown = {
   width: "150px",
   zIndex: 1000,
   boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
+};
+
+const navStyle = {
+  display: "flex",
+  justifyContent: "space-between",
+  alignItems: "center",
+  padding: "18px 40px",
+  background: "var(--nav-bg)",
+  backdropFilter: "blur(10px)",
+  boxShadow: "0 2px 10px rgba(0,0,0,0.2)"
 };

@@ -1,8 +1,56 @@
+/* 🔥 THEME VARIABLES */
+
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+  --nav-bg: #111;
+  --nav-text: #ffffff;
+  --card-bg: #ffffff;
+}
+:root {
+  --bg-color: #f5f7fa;
+  --text-color: #1a1a1a;
+  --nav-bg: #0f172a;
+  --card-bg: #ffffff;
+  --accent: #ff6b00;
+}
+
+[data-theme="dark"] {
+  --bg-color: #0b0f19;
+  --text-color: #e5e7eb;
+  --nav-bg: #020617;
+  --card-bg: #111827;
+  --accent: #ff8c42;
+}
+
+/* GLOBAL */
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+}
+
+/* REMOVE heavy overlay effect */
+body::before {
+  display: none;
+}
+[data-theme="dark"] {
+  --bg-color: #121212;
+  --text-color: #ffffff;
+  --nav-bg: #000000;
+  --nav-text: #ffffff;
+  --card-bg: #1e1e1e;
+}
+
+/* ✅ YOUR ORIGINAL CODE (NOT REMOVED) */
 body {
   background: url("/bg.png") no-repeat center center fixed;
   background-size: cover;
+  color: var(--text-color);
 }
 
+/* overlay */
 body::before {
   content: "";
   position: fixed;
