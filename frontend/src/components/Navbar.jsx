@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useContext } from "react"; // ✅ updated
+import { useState, useEffect, useRef, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/AppContext";
 import { useAuth } from "../context/AuthContext";
-import { ThemeContext } from "../context/ThemeContext"; // ✅ ADDED
+import { ThemeContext } from "../context/ThemeContext";
 
 export default function Navbar({ setCategory }) {
   const [show, setShow] = useState(false);
@@ -16,22 +16,15 @@ export default function Navbar({ setCategory }) {
   const { user, logout } = auth;
 
   const navigate = useNavigate();
-
-  const { toggleTheme } = useContext(ThemeContext); // ✅ ADDED
+  const { toggleTheme } = useContext(ThemeContext);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
-      if (
-        dropdownRef.current &&
-        !dropdownRef.current.contains(e.target)
-      ) {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
         setShow(false);
       }
 
-      if (
-        profileRef.current &&
-        !profileRef.current.contains(e.target)
-      ) {
+      if (profileRef.current && !profileRef.current.contains(e.target)) {
         setProfileOpen(false);
       }
     };
@@ -55,19 +48,47 @@ export default function Navbar({ setCategory }) {
           ❤️ Wishlist
         </span>
 
+        {/* 🔥 UPDATED SHOP DROPDOWN */}
         <div style={{ position: "relative" }} ref={dropdownRef}>
-          <span
-            style={linkStyle}
-            onClick={() => setShow(!show)}
-          >
+          <span style={linkStyle} onClick={() => setShow(!show)}>
             Shop ▾
           </span>
 
           {show && (
             <div style={dropdown}>
+
+              {/* 👕 FASHION */}
+              <p style={sectionTitle}>Fashion</p>
               <p onClick={() => setCategory("men")}>Men</p>
               <p onClick={() => setCategory("women")}>Women</p>
               <p onClick={() => setCategory("kids")}>Kids</p>
+
+              <hr />
+
+              {/* 📱 ELECTRONICS */}
+              <p style={sectionTitle}>Electronics</p>
+              <p onClick={() => setCategory("mobiles")}>Mobiles</p>
+              <p onClick={() => setCategory("laptops")}>Laptops</p>
+              <p onClick={() => setCategory("headphones")}>Headphones</p>
+              <p onClick={() => setCategory("smartwatches")}>Smartwatches</p>
+
+              <hr />
+
+              {/* 🏠 HOME */}
+              <p style={sectionTitle}>Home & Living</p>
+              <p onClick={() => setCategory("furniture")}>Furniture</p>
+              <p onClick={() => setCategory("home-decor")}>Home Decor</p>
+              <p onClick={() => setCategory("kitchen")}>Kitchen</p>
+              <p onClick={() => setCategory("lighting")}>Lighting</p>
+
+              <hr />
+
+              {/* 💄 BEAUTY */}
+              <p style={sectionTitle}>Beauty</p>
+              <p onClick={() => setCategory("skincare")}>Skincare</p>
+              <p onClick={() => setCategory("makeup")}>Makeup</p>
+              <p onClick={() => setCategory("haircare")}>Haircare</p>
+
             </div>
           )}
         </div>
@@ -76,19 +97,19 @@ export default function Navbar({ setCategory }) {
           Cart ({cart.length})
         </Link>
 
-        {/* ✅ THEME BUTTON ADDED */}
+        {/* THEME BUTTON */}
         <button
-  onClick={toggleTheme}
-  style={{
-    background: "var(--card-bg)",
-    border: "none",
-    padding: "6px 12px",
-    borderRadius: "20px",
-    cursor: "pointer"
-  }}
->
-  🌙 | ☀️
-</button>
+          onClick={toggleTheme}
+          style={{
+            background: "var(--card-bg)",
+            border: "none",
+            padding: "6px 12px",
+            borderRadius: "20px",
+            cursor: "pointer"
+          }}
+        >
+          🌙 | ☀️
+        </button>
 
         {user ? (
           <div style={{ position: "relative" }} ref={profileRef}>
@@ -120,8 +141,12 @@ export default function Navbar({ setCategory }) {
   );
 }
 
-/* 🔥 ORIGINAL STYLES (NOT REMOVED) */
+/* 🔥 STYLES */
 
+const sectionTitle = {
+  fontWeight: "bold",
+  marginTop: "8px"
+};
 
 const logoStyle = {
   color: "#fff",
@@ -151,7 +176,7 @@ const dropdown = {
   padding: "10px",
   borderRadius: "6px",
   zIndex: 1000,
-  minWidth: "120px",
+  minWidth: "180px", // 🔥 increased width
   boxShadow: "0 4px 10px rgba(0,0,0,0.2)"
 };
 

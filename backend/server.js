@@ -10,8 +10,6 @@ import cartRoutes from "./routes/cartRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import orderRoutes from "./routes/orderRoutes.js";
 
-
-
 dotenv.config();
 connectDB();
 
@@ -20,12 +18,17 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
+import reviewRoutes from "./routes/reviewRoutes.js";
+app.use("/api/reviews", reviewRoutes); 
+
 app.use("/api/user", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
+
 app.listen(process.env.PORT, () => {
   console.log(`Server running on ${process.env.PORT}`);
 });

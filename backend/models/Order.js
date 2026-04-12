@@ -1,13 +1,19 @@
 import mongoose from "mongoose";
 
 const orderSchema = new mongoose.Schema({
-  user: String, // or userId later
+  user: String, // kept
   product: Object,
   address: String,
   paymentMethod: String,
+
+  status: {               // ✅ ADDED
+    type: String,
+    default: "Pending"
+  },
+
   createdAt: {
     type: Date,
-    default: Date.now     //which can store automatically uree time and date
+    default: Date.now
   }
 });
 
