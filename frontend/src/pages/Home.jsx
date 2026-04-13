@@ -21,15 +21,15 @@ export default function Home({ category }) {
       .catch(err => console.log(err));
   }, []);
 
-  // 🔥 COMBINED FILTER LOGIC
+  // 🔥 FIXED FILTER LOGIC (MORE SAFE + REAL WORLD READY)
   const filtered = products.filter((item) => {
     return (
       // 🔍 Search
-      item.name.toLowerCase().includes(search.toLowerCase()) &&
+      item.name.toLowerCase().includes(search.toLowerCase().trim()) &&
 
-      // 📂 Category (from Navbar)
+      // 📂 Category (FIXED)
       (category
-        ? item.category.toLowerCase() === category.toLowerCase()
+        ? item.category.toLowerCase().trim() === category.toLowerCase().trim()
         : true) &&
 
       // 💰 Price
@@ -40,23 +40,67 @@ export default function Home({ category }) {
   return (
     <div>
 
-      {/* 🔥 SEARCH + FILTER UI */}
-      <div style={{ display: "flex", gap: "10px", padding: "20px" }}>
+      {/* 🔥 SEARCH + FILTER UI (UPGRADED) */}
+      <div style={{
+        display: "flex",
+        justifyContent: "center",
+        padding: "30px 20px"
+      }}>
         
-        {/* 🔍 SEARCH */}
-        <input
-          type="text"
-          placeholder="Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          style={{ padding: "8px", width: "200px" }}
-        />
-    
+        <div style={{
+          position: "relative",
+          width: "350px"
+        }}>
 
+          {/* 🔍 ICON */}
+          <span style={{
+            position: "absolute",
+            left: "12px",
+            top: "50%",
+            transform: "translateY(-50%)",
+            fontSize: "16px",
+            color: "#888"
+          }}>
+            🔍
+          </span>
+
+          {/* INPUT */}
+          <input
+            type="text"
+            placeholder="Search products..."
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            style={{
+              width: "100%",
+              padding: "12px 12px 12px 40px",
+              borderRadius: "25px",
+              border: "1px solid #ddd",
+              outline: "none",
+              fontSize: "14px",
+              background: "#fff",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.1)",
+              transition: "0.3s"
+            }}
+            onFocus={(e) => {
+              e.target.style.boxShadow = "0 0 0 3px rgba(33,150,243,0.2)";
+              e.target.style.border = "1px solid #2196f3";
+            }}
+            onBlur={(e) => {
+              e.target.style.boxShadow = "0 4px 15px rgba(0,0,0,0.1)";
+              e.target.style.border = "1px solid #ddd";
+            }}
+          />
+
+        </div>
       </div>
 
       {/* 🔥 TITLE */}
-      <h2 style={{ textAlign: "center", margin: "20px 0" }}>
+      <h2 style={{
+        textAlign: "center",
+        margin: "10px 0 20px",
+        fontWeight: "600",
+        letterSpacing: "1px"
+      }}>
         {category ? `${category.toUpperCase()} PRODUCTS` : "All Products"}
       </h2>
 

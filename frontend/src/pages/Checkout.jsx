@@ -25,7 +25,7 @@ export default function Checkout() {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/orders/create",
+        "http://localhost:5002/api/orders/create",
         {
           product,
           address,

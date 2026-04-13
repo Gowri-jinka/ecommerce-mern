@@ -14,10 +14,18 @@ export default function ProductCard({ product }) {
 
     try {
       await API.post(`/user/wishlist/${id}`);
-      setLiked(true); // ✅ UI feedback
+      setLiked(true);
     } catch (err) {
       console.log(err);
     }
+  };
+
+  // ✅ ADDED SHARE FUNCTION
+  const handleShare = (e) => {
+    e.stopPropagation();
+    const url = `${window.location.origin}/product/${product._id}`;
+    navigator.clipboard.writeText(url);
+    alert("Product link copied!");
   };
 
   return (
@@ -71,13 +79,29 @@ export default function ProductCard({ product }) {
         >
           {liked ? "❤️ Added" : "🤍 Wishlist"}
         </button>
+
+        {/* ✅ ADDED SHARE BUTTON */}
+        <button
+          onClick={handleShare}
+          style={{
+            width: "100%",
+            marginTop: "8px",
+            padding: "8px",
+            background: "#2196f3",
+            color: "#fff",
+            border: "none",
+            borderRadius: "8px",
+            cursor: "pointer"
+          }}
+        >
+          🔗 Share
+        </button>
       </div>
     </div>
   );
 }
 
 /* STYLES */
-
 
 const imgStyle = {
   width: "100%",

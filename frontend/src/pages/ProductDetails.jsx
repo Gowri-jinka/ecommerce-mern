@@ -11,6 +11,23 @@ export default function ProductDetails() {
   const [comment, setComment] = useState("");
   const [avgRating, setAvgRating] = useState(0);
 
+  const [showDetails, setShowDetails] = useState(false); // ✅ ADDED
+
+  const handleShare = () => {
+    const url = window.location.href;
+
+    if (navigator.share) {
+      navigator.share({
+        title: product.name,
+        text: "Check this product",
+        url: url,
+      });
+    } else {
+      navigator.clipboard.writeText(url);
+      alert("Link copied!");
+    }
+  };
+
   useEffect(() => {
     API.get(`/reviews/${id}`)
       .then(res => setReviews(res.data))
@@ -66,7 +83,6 @@ export default function ProductDetails() {
       display: "flex",
       justifyContent: "center"
     }}>
-      {/* 🔥 NEW CARD WRAPPER (MAIN FIX) */}
       <div style={{
         background: "rgba(255,255,255,0.95)",
         padding: "25px",
@@ -85,24 +101,103 @@ export default function ProductDetails() {
           }} 
         />
 
-        <h2 style={{ marginBottom: "10px" }}>{product.name}</h2>
-        <p style={{ marginBottom: "10px" }}>{product.description}</p>
-        <h3 style={{ marginBottom: "15px" }}>₹{product.price}</h3>
+        <h2>{product.name}</h2>
+        <p>{product.description}</p>
+        <h3>₹{product.price}</h3>
+
+        {/* 🔥 PRODUCT HIGHLIGHTS */}
+        {product.highlights && (
+          <div style={{
+            marginTop: "20px",
+            padding: "15px",
+            borderRadius: "10px",
+            background: "#f5f5f5"
+          }}>
+            <div style={{
+              display: "flex",
+              justifyContent: "space-between"
+            }}>
+              <h3>Product Highlights</h3>
+
+              <button
+                onClick={() => {
+                  const text = `
+Color: ${product.highlights?.color}
+Fabric: ${product.highlights?.fabric}
+Fit: ${product.highlights?.fit}
+Length: ${product.highlights?.length}
+                  `;
+                  navigator.clipboard.writeText(text);
+                  alert("Copied!");
+                }}
+              >
+                COPY
+              </button>
+            </div>
+
+            <div style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "15px"
+            }}>
+              <div>
+                <p>Color</p>
+                <h4>{product.highlights?.color}</h4>
+              </div>
+
+              <div>
+                <p>Fabric</p>
+                <h4>{product.highlights?.fabric}</h4>
+              </div>
+
+              <div>
+                <p>Fit</p>
+                <h4>{product.highlights?.fit}</h4>
+              </div>
+
+              <div>
+                <p>Length</p>
+                <h4>{product.highlights?.length}</h4>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ✅ ADDITIONAL DETAILS */}
+        <div
+          onClick={() => setShowDetails(!showDetails)}
+          style={{
+            marginTop: "15px",
+            cursor: "pointer",
+            fontWeight: "bold"
+          }}
+        >
+          Additional Details ⌄
+        </div>
+
+        {showDetails && (
+          <p>{product.description}</p>
+        )}
+
+        {/* SHARE */}
+        <button onClick={handleShare}>🔗 Share Product</button>
+
+        <a
+          href={`https://wa.me/?text=${encodeURIComponent(window.location.href)}`}
+          target="_blank"
+        >
+          Share on WhatsApp
+        </a>
 
         <hr />
 
-        <h3>⭐ Average Rating: {avgRating.toFixed(1)}</h3>
+        <h3>⭐ {avgRating.toFixed(1)}</h3>
 
         <div>
           {[1,2,3,4,5].map(star => (
             <span
               key={star}
               onClick={() => setRating(star)}
-              style={{
-                cursor: "pointer",
-                color: star <= rating ? "gold" : "gray",
-                fontSize: "22px"
-              }}
             >
               ★
             </span>
@@ -110,55 +205,18 @@ export default function ProductDetails() {
         </div>
 
         <textarea
-          placeholder="Write your review..."
           value={comment}
           onChange={(e) => setComment(e.target.value)}
-          style={{
-            display: "block",
-            marginTop: "10px",
-            width: "100%",
-            height: "80px",
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #ccc"
-          }}
         />
 
-        <button
-          onClick={submitReview}
-          style={{
-            marginTop: "10px",
-            padding: "10px",
-            width: "100%",
-            background: "#ff6b00",
-            color: "#fff",
-            border: "none",
-            borderRadius: "8px",
-            cursor: "pointer"
-          }}
-        >
-          Submit Review
-        </button>
+        <button onClick={submitReview}>Submit Review</button>
 
-        <div style={{ marginTop: "20px" }}>
-          {reviews.length > 0 ? (
-            reviews.map(r => (
-              <div
-                key={r._id}
-                style={{
-                  borderBottom: "1px solid #ccc",
-                  marginBottom: "10px",
-                  paddingBottom: "10px"
-                }}
-              >
-                <p><b>{r.userId?.name || "User"}</b></p>
-                <p>⭐ {r.rating}</p>
-                <p>{r.comment}</p>
-              </div>
-            ))
-          ) : (
-            <p>No reviews yet</p>
-          )}
+        <div>
+          {reviews.map(r => (
+            <div key={r._id}>
+              <p>{r.comment}</p>
+            </div>
+          ))}
         </div>
 
       </div>

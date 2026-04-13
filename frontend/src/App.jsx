@@ -28,7 +28,7 @@ function App() {
     <BrowserRouter>           
       <Navbar setCategory={setCategory} />    
 
-      <Routes>            //navigation paths
+      <Routes>           
         <Route path="/" element={<Home category={category} />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />
