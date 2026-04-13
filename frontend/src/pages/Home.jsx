@@ -21,19 +21,20 @@ export default function Home({ category }) {
       .catch(err => console.log(err));
   }, []);
 
-  // 🔥 FIXED FILTER LOGIC (MORE SAFE + REAL WORLD READY)
+  // 🔥 UPDATED FILTER LOGIC (FIXED + SAFE)
   const filtered = products.filter((item) => {
     return (
-      // 🔍 Search
-      item.name.toLowerCase().includes(search.toLowerCase().trim()) &&
+      // 🔍 Search (safe + trim)
+      item.name?.toLowerCase().includes(search.toLowerCase().trim()) &&
 
-      // 📂 Category (FIXED)
-      (category
-        ? item.category.toLowerCase().trim() === category.toLowerCase().trim()
-        : true) &&
+      // 📂 Category (fixed bug)
+      (
+        !category || category === "" ||
+        item.category?.toLowerCase().trim() === category.toLowerCase().trim()
+      ) &&
 
       // 💰 Price
-      (price ? item.price <= price : true)
+      (!price || item.price <= price)
     );
   });
 

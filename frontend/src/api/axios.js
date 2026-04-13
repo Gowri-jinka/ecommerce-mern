@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API = axios.create({
-  baseURL: "https://ecommerce-mern-backend-7swk.onrender.com",   //custom axios
+  baseURL: "http://localhost:5002/api",   //custom axios
 });
 
 // Attach token to every request
