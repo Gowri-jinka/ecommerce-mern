@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios"; // ✅ IMPORT AXIOS
+import axios from "axios"; 
 import qrImage from "../assets/qr.png";
 
 export default function Checkout() {
@@ -10,11 +10,13 @@ export default function Checkout() {
 
   const [address, setAddress] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("cod");
-  const [loading, setLoading] = useState(false); // optional but important
+  const [loading, setLoading] = useState(false);
+
+  // ✅ GET USER FROM LOCAL STORAGE
+  const user = JSON.parse(localStorage.getItem("user"));
 
   if (!product) return <h2>No product selected</h2>;
 
-  // ✅ UPDATED FUNCTION
   const handlePlaceOrder = async () => {
     if (!address) {
       alert("Enter address");
@@ -30,6 +32,7 @@ export default function Checkout() {
           product,
           address,
           paymentMethod,
+          userId: user?._id   // ✅ IMPORTANT (Order history fix)
         }
       );
 

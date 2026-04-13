@@ -15,7 +15,8 @@ import ResetPassword from "./pages/ResetPassword";
 import Profile from "./pages/Profile";
 import VerifyOTP from "./pages/VerifyOTP";
 import Wishlist from "./pages/Wishlist";
-
+import Orders from "./pages/Orders";   
+import Admin from "./pages/Admin";         
 
 function NotFound() {
   return <h2 style={{ textAlign: "center" }}>404 - Page Not Found</h2>;
@@ -39,6 +40,11 @@ function App() {
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/verify-otp" element={<VerifyOTP />} />
         <Route path="/wishlist" element={<Wishlist />} />
+        <Route path="/orders" element={<Orders />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/orders" element={<Orders />} />
+<Route path="/admin" element={<Admin />} />
+
 
         {/* PROTECTED PROFILE */}
         <Route

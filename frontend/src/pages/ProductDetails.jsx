@@ -11,7 +11,7 @@ export default function ProductDetails() {
   const [comment, setComment] = useState("");
   const [avgRating, setAvgRating] = useState(0);
 
-  const [showDetails, setShowDetails] = useState(false); // ✅ ADDED
+  const [showDetails, setShowDetails] = useState(false);
 
   const handleShare = () => {
     const url = window.location.href;
@@ -45,6 +45,19 @@ export default function ProductDetails() {
         setProduct(found);
       });
   }, [id]);
+
+  // 🔥 RECENTLY VIEWED FEATURE
+  useEffect(() => {
+    if (product) {
+      let viewed = JSON.parse(localStorage.getItem("recent")) || [];
+
+      viewed = viewed.filter(p => p._id !== product._id);
+      viewed.unshift(product);
+      viewed = viewed.slice(0, 5);
+
+      localStorage.setItem("recent", JSON.stringify(viewed));
+    }
+  }, [product]);
 
   const submitReview = async () => {
     try {
@@ -94,18 +107,14 @@ export default function ProductDetails() {
 
         <img 
           src={product.image} 
-          style={{ 
-            width: "100%", 
-            borderRadius: "10px",
-            marginBottom: "15px"
-          }} 
+          style={{ width: "100%", borderRadius: "10px", marginBottom: "15px" }} 
         />
 
         <h2>{product.name}</h2>
         <p>{product.description}</p>
         <h3>₹{product.price}</h3>
 
-        {/* 🔥 PRODUCT HIGHLIGHTS */}
+        {/* HIGHLIGHTS */}
         {product.highlights && (
           <div style={{
             marginTop: "20px",
@@ -113,71 +122,23 @@ export default function ProductDetails() {
             borderRadius: "10px",
             background: "#f5f5f5"
           }}>
-            <div style={{
-              display: "flex",
-              justifyContent: "space-between"
-            }}>
-              <h3>Product Highlights</h3>
-
-              <button
-                onClick={() => {
-                  const text = `
-Color: ${product.highlights?.color}
-Fabric: ${product.highlights?.fabric}
-Fit: ${product.highlights?.fit}
-Length: ${product.highlights?.length}
-                  `;
-                  navigator.clipboard.writeText(text);
-                  alert("Copied!");
-                }}
-              >
-                COPY
-              </button>
-            </div>
-
-            <div style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "15px"
-            }}>
-              <div>
-                <p>Color</p>
-                <h4>{product.highlights?.color}</h4>
-              </div>
-
-              <div>
-                <p>Fabric</p>
-                <h4>{product.highlights?.fabric}</h4>
-              </div>
-
-              <div>
-                <p>Fit</p>
-                <h4>{product.highlights?.fit}</h4>
-              </div>
-
-              <div>
-                <p>Length</p>
-                <h4>{product.highlights?.length}</h4>
-              </div>
-            </div>
+            <h3>Product Highlights</h3>
+            <p>Color: {product.highlights?.color}</p>
+            <p>Fabric: {product.highlights?.fabric}</p>
+            <p>Fit: {product.highlights?.fit}</p>
+            <p>Length: {product.highlights?.length}</p>
           </div>
         )}
 
-        {/* ✅ ADDITIONAL DETAILS */}
+        {/* DETAILS TOGGLE */}
         <div
           onClick={() => setShowDetails(!showDetails)}
-          style={{
-            marginTop: "15px",
-            cursor: "pointer",
-            fontWeight: "bold"
-          }}
+          style={{ marginTop: "10px", cursor: "pointer", fontWeight: "bold" }}
         >
           Additional Details ⌄
         </div>
 
-        {showDetails && (
-          <p>{product.description}</p>
-        )}
+        {showDetails && <p>{product.description}</p>}
 
         {/* SHARE */}
         <button onClick={handleShare}>🔗 Share Product</button>
@@ -195,12 +156,7 @@ Length: ${product.highlights?.length}
 
         <div>
           {[1,2,3,4,5].map(star => (
-            <span
-              key={star}
-              onClick={() => setRating(star)}
-            >
-              ★
-            </span>
+            <span key={star} onClick={() => setRating(star)}>★</span>
           ))}
         </div>
 
