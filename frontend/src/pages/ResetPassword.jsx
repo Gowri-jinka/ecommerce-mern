@@ -73,7 +73,7 @@ const input = {
 
 const btn = {
   width: "100%",
-  padding: "10px",
+  padding: "10px",       
   background: "black",
   color: "#fff",
   border: "none",

@@ -1,9 +1,13 @@
 import nodemailer from "nodemailer";
 
-let transporter;
+let transporter = null;
 
-const createTransporter = async () => {
+// ✅ ALWAYS CREATE PROPER TRANSPORTER
+export const createTransporter = async () => {
   const testAccount = await nodemailer.createTestAccount();
+
+  console.log("ETHEREAL USER:", testAccount.user);
+  console.log("ETHEREAL PASS:", testAccount.pass);
 
   transporter = nodemailer.createTransport({
     host: "smtp.ethereal.email",
@@ -18,6 +22,10 @@ const createTransporter = async () => {
   console.log("Ethereal Email Ready");
 };
 
-await createTransporter();
-
-export default transporter;
+// ✅ RETURN ONLY VALID TRANSPORTER
+export const getTransporter = () => {
+  if (!transporter) {
+    throw new Error("Transporter not initialized");
+  }
+  return transporter;
+};

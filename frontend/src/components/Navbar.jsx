@@ -48,7 +48,7 @@ export default function Navbar({ setCategory }) {
 
         <div style={menu}>
           <Link to="/" onClick={() => { setCategory(""); setActive(""); }} style={linkStyle}>
-            Home
+            Shopping
           </Link>
 
           <span onClick={() => navigate("/wishlist")} style={linkStyle}>

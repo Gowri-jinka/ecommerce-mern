@@ -9,21 +9,50 @@ export default function Signup() {
     password: ""
   });
 
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
 
   const handleSubmit = async () => {
     try {
+      console.log("🔥 BUTTON CLICKED");
+
+      // ✅ VALIDATION
+      if (!form.name || !form.email || !form.password) {
+        alert("Please fill all fields");
+        return;
+      }
+
+      setLoading(true);
+
+      console.log("📤 Sending Signup Data:", form);
+
       const res = await API.post("/auth/register", form);
+
+      console.log("✅ SUCCESS RESPONSE:", res.data);
 
       alert(res.data.msg);
 
-      // ✅ Redirect to OTP screen (IMPORTANT FIX)
+      // ✅ Navigate to OTP page
       navigate("/verify-otp", {
         state: { email: form.email }
       });
 
     } catch (err) {
-      alert(err.response?.data?.msg || "Signup failed");
+      console.log("❌ FULL ERROR:", err);
+
+      if (err.response) {
+        console.log("❌ SERVER ERROR:", err.response.data);
+        alert(err.response.data.msg || "Server error");
+      } else if (err.request) {
+        console.log("❌ NO RESPONSE FROM SERVER");
+        alert("Backend not responding");
+      } else {
+        console.log("❌ ERROR:", err.message);
+        alert("Something went wrong");
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -35,6 +64,7 @@ export default function Signup() {
         <input
           placeholder="Name"
           style={input}
+          value={form.name}
           onChange={(e) =>
             setForm({ ...form, name: e.target.value })
           }
@@ -43,6 +73,7 @@ export default function Signup() {
         <input
           placeholder="Email"
           style={input}
+          value={form.email}
           onChange={(e) =>
             setForm({ ...form, email: e.target.value })
           }
@@ -52,13 +83,22 @@ export default function Signup() {
           type="password"
           placeholder="Password"
           style={input}
+          value={form.password}
           onChange={(e) =>
             setForm({ ...form, password: e.target.value })
           }
         />
 
-        <button onClick={handleSubmit} style={btn}>
-          Sign Up
+        <button
+          onClick={handleSubmit}
+          style={{
+            ...btn,
+            background: loading ? "#555" : "black",
+            cursor: loading ? "not-allowed" : "pointer"
+          }}
+          disabled={loading}
+        >
+          {loading ? "Signing Up..." : "Sign Up"}
         </button>
 
         <p>
@@ -94,8 +134,6 @@ const input = {
 const btn = {
   width: "100%",
   padding: "10px",
-  background: "black",
   color: "#fff",
-  border: "none",
-  cursor: "pointer"
+  border: "none"
 };

@@ -1,13 +1,31 @@
 import User from "../models/User.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import transporter from "../config/mailer.js";
+import { getTransporter } from "../config/mailer.js";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
 
-//  Send Email
+// 🔥 UPDATED Send Email (ONLY THIS CHANGED)
 const sendEmail = async (to, subject, html) => {
   try {
+    console.log("========== EMAIL FUNCTION START ==========");
+
+    let transporter = getTransporter();
+
+    // 🔥 WAIT UNTIL TRANSPORTER READY
+    let retries = 5;
+    while (!transporter && retries > 0) {
+      console.log("⏳ Waiting for transporter...");
+      await new Promise(res => setTimeout(res, 500));
+      transporter = getTransporter();
+      retries--;
+    }
+
+    if (!transporter) {
+      console.log("❌ Transporter STILL NOT READY");
+      return;
+    }
+
     const info = await transporter.sendMail({
       from: '"EdisonKart" <test@test.com>',
       to,
@@ -15,18 +33,24 @@ const sendEmail = async (to, subject, html) => {
       html
     });
 
-    console.log("EMAIL SENT:", subject);
-    console.log("Preview URL:", nodemailer.getTestMessageUrl(info));
+    console.log(" EMAIL SENT SUCCESSFULLY");
+
+    const preview = nodemailer.getTestMessageUrl(info);
+    console.log(" PREVIEW LINK ", preview);
 
   } catch (err) {
-    console.log("Email Error:", err.message);
+    console.log("❌ EMAIL ERROR:", err);
   }
 };
 
 // 🔐 REGISTER + SEND OTP
 export const registerUser = async (req, res) => {
   try {
+    console.log("🔥 REGISTER API CALLED");
+
     const { name, email, password } = req.body;
+
+    console.log("REGISTER HIT:", email);
 
     const userExist = await User.findOne({ email });
     if (userExist) {
@@ -46,6 +70,10 @@ export const registerUser = async (req, res) => {
       isVerified: false
     });
 
+    console.log("User Created");
+
+    console.log("About to send OTP email...");
+
     await sendEmail(
       email,
       "Verify your account - EdisonKart",
@@ -55,7 +83,7 @@ export const registerUser = async (req, res) => {
     res.json({ msg: "Registered. OTP sent to email." });
 
   } catch (error) {
-    console.log(error);
+    console.log("❌ REGISTER ERROR:", error);
     res.status(500).json({ msg: "Server Error" });
   }
 };
@@ -95,7 +123,7 @@ export const resendOTP = async (req, res) => {
   try {
     const { email } = req.body;
 
-    console.log("RESEND OTP HIT:", email); // ✅ DEBUG
+    console.log("RESEND OTP HIT:", email);
 
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ msg: "User not found" });
@@ -107,6 +135,8 @@ export const resendOTP = async (req, res) => {
 
     await user.save();
 
+    console.log("About to resend OTP email...");
+
     await sendEmail(
       email,
       "Resend OTP - EdisonKart",
@@ -116,7 +146,7 @@ export const resendOTP = async (req, res) => {
     res.json({ msg: "OTP resent" });
 
   } catch (error) {
-    console.log("RESEND ERROR:", error); // ✅ DEBUG
+    console.log("RESEND ERROR:", error);
     res.status(500).json({ msg: "Error resending OTP" });
   }
 };
@@ -130,7 +160,6 @@ export const verifyOTP = async (req, res) => {
 
     if (!user) return res.status(400).json({ msg: "User not found" });
 
-    // ✅ FIXED TYPE ISSUE
     if (String(user.otp) !== String(otp)) {
       return res.status(400).json({ msg: "Invalid OTP" });
     }
@@ -148,7 +177,7 @@ export const verifyOTP = async (req, res) => {
     res.json({ msg: "Account verified" });
 
   } catch (error) {
-    console.log("VERIFY ERROR:", error); // ✅ DEBUG
+    console.log("VERIFY ERROR:", error);
     res.status(500).json({ msg: "Error verifying OTP" });
   }
 };
@@ -169,6 +198,8 @@ export const forgotPassword = async (req, res) => {
     await user.save();
 
     const resetLink = `http://localhost:5173/reset-password/${token}`;
+
+    console.log("About to send reset email...");
 
     await sendEmail(
       email,

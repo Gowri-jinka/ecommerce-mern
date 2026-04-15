@@ -1,4 +1,4 @@
-/* 🔥 APP BACKGROUND WRAPPER */
+/* APP BACKGROUND WRAPPER */
 .app-bg {
   min-height: 100vh;
 
@@ -8,7 +8,7 @@
   background-size: cover;
 }
 
-/* 🔥 OPTIONAL OVERLAY (better readability) */
+/*  OPTIONAL OVERLAY (better readability) */
 .app-bg::before {
   content: "";
   position: fixed;
@@ -17,7 +17,7 @@
   z-index: 0;
 }
 
-/* 🔥 ENSURE CONTENT ABOVE OVERLAY */
+/*  ENSURE CONTENT ABOVE OVERLAY */
 .app-content {
   position: relative;
   z-index: 1;

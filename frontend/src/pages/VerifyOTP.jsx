@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import API from "../api/axios";
 
@@ -9,37 +9,49 @@ export default function VerifyOTP() {
 
   const email = location.state?.email;
 
-  // ✅ Handle refresh / missing email
-  if (!email) {
-    alert("Session expired. Please signup again.");
-    navigate("/signup");
-  }
+  // ✅ FIX: handle redirect safely
+  useEffect(() => {
+    if (!email) {
+      alert("Session expired. Please signup again.");
+      navigate("/signup");
+    }
+  }, [email, navigate]);
 
   const handleVerify = async () => {
     try {
+      console.log("🔐 VERIFY CLICKED");
+
       const res = await API.post("/auth/verify-otp", {
         email,
         otp
       });
 
+      console.log("✅ VERIFY RESPONSE:", res.data);
+
       alert(res.data.msg);
+
+      // ✅ ONLY navigate after success
       navigate("/login");
 
     } catch (err) {
-      // ✅ SHOW REAL ERROR
-      console.log("VERIFY ERROR:", err.response?.data);
-      alert(err.response?.data?.msg || err.message);
+      console.log("❌ VERIFY ERROR:", err.response?.data || err.message);
+      alert(err.response?.data?.msg || "Invalid OTP");
     }
   };
 
   const handleResend = async () => {
     try {
+      console.log("🔁 RESEND OTP");
+
       const res = await API.post("/auth/resend-otp", { email });
+
+      console.log("✅ RESEND RESPONSE:", res.data);
+
       alert(res.data.msg);
+
     } catch (err) {
-      // ✅ SHOW REAL ERROR
-      console.log("RESEND ERROR:", err.response?.data);
-      alert(err.response?.data?.msg || err.message);
+      console.log("❌ RESEND ERROR:", err.response?.data || err.message);
+      alert(err.response?.data?.msg || "Error resending OTP");
     }
   };
 
@@ -52,6 +64,7 @@ export default function VerifyOTP() {
         <input
           placeholder="Enter OTP"
           style={input}
+          value={otp}
           onChange={(e) => setOtp(e.target.value)}
         />
 

@@ -1,7 +1,6 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
-import axios from "axios"; 
-import qrImage from "../assets/qr.png";
+import axios from "axios";
 
 export default function Checkout() {
   const { state } = useLocation();
@@ -12,10 +11,17 @@ export default function Checkout() {
   const [paymentMethod, setPaymentMethod] = useState("cod");
   const [loading, setLoading] = useState(false);
 
-  // ✅ GET USER FROM LOCAL STORAGE
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (!product) return <h2>No product selected</h2>;
+
+  // 🔥 UPDATED DELIVERY LOGIC (SMART)
+  const deliveryCharge =
+    product.price >= 1000
+      ? 0
+      : (product.deliveryCharge ?? 50); // fallback
+
+  const totalPrice = product.price + deliveryCharge;
 
   const handlePlaceOrder = async () => {
     if (!address) {
@@ -26,50 +32,124 @@ export default function Checkout() {
     setLoading(true);
 
     try {
-      const response = await axios.post(
-        "http://localhost:5002/api/orders/create",
-        {
-          product,
-          address,
-          paymentMethod,
-          userId: user?._id   // ✅ IMPORTANT (Order history fix)
-        }
+      // COD
+      if (paymentMethod === "cod") {
+        await axios.post(
+          "http://localhost:5002/api/orders/create",
+          {
+            product,
+            address,
+            paymentMethod,
+            userId: user?._id
+          }
+        );
+
+        navigate("/success", {
+          state: { product, address, paymentMethod },
+        });
+
+        return;
+      }
+
+      // ONLINE PAYMENT
+      const { data } = await axios.post(
+        "http://localhost:5002/api/orders/razorpay-order",
+        { amount: totalPrice }
       );
 
-      console.log("Order saved:", response.data);
+      const options = {
+        key: "rzp_test_SdHPxLvL4yibXG",
+        amount: data.amount,
+        currency: "INR",
+        name: "EdisonKart",
+        description: product.name,
+        order_id: data.id,
 
-      // ✅ Navigate after success
-      navigate("/success", {
-        state: { product, address, paymentMethod },
-      });
+        handler: async function () {
+          await axios.post(
+            "http://localhost:5002/api/orders/create",
+            {
+              product,
+              address,
+              paymentMethod: "online",
+              userId: user?._id
+            }
+          );
+
+          navigate("/success", {
+            state: { product, address, paymentMethod: "online" },
+          });
+        },
+
+        theme: {
+          color: "#ff3f6c",
+        },
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
 
     } catch (err) {
       console.error(err);
-      alert("Order failed");
+      alert("Payment failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ padding: "30px" }}>
+    <div style={{ padding: "30px", maxWidth: "600px", margin: "auto" }}>
       <h2>Checkout</h2>
 
       {/* PRODUCT */}
-      <img src={product.image} width="200" alt="product" />
+      <img src={product.image} width="150" alt="product" />
       <h3>{product.name}</h3>
-      <p>₹{product.price}</p>
+
+      {/* 🔥 ORDER SUMMARY */}
+      <div style={{
+        background: "#fff",
+        padding: "20px",
+        borderRadius: "10px",
+        marginTop: "20px",
+        boxShadow: "0 5px 15px rgba(0,0,0,0.1)"
+      }}>
+        <h3>Order Summary</h3>
+
+        <p>Price: ₹{product.price}</p>
+
+        <p>
+          Delivery:{" "}
+          {deliveryCharge === 0 ? (
+            <span style={{ color: "green" }}>FREE</span>
+          ) : (
+            `₹${deliveryCharge}`
+          )}
+        </p>
+
+        {/* 🔥 EXTRA UX (nice touch) */}
+        {deliveryCharge === 0 && (
+          <p style={{ color: "green", fontSize: "13px" }}>
+            🎉 Free delivery applied (above ₹1000)
+          </p>
+        )}
+
+        <hr />
+
+        <h3>Total: ₹{totalPrice}</h3>
+      </div>
 
       {/* ADDRESS */}
-      <h4>Delivery Address</h4>
+      <h4 style={{ marginTop: "20px" }}>Delivery Address</h4>
       <input
         placeholder="Enter address"
         value={address}
         onChange={(e) => setAddress(e.target.value)}
         style={{
           width: "100%",
-          padding: "10px",
+          padding: "12px",
           marginBottom: "20px",
+          borderRadius: "6px",
+          border: "1px solid #ccc"
         }}
       />
 
@@ -90,60 +170,33 @@ export default function Checkout() {
       <label>
         <input
           type="radio"
-          checked={paymentMethod === "upi"}
-          onChange={() => setPaymentMethod("upi")}
+          checked={paymentMethod === "online"}
+          onChange={() => setPaymentMethod("online")}
         />
-        UPI
+        Pay Online (Card / UPI / NetBanking)
       </label>
 
-      <br />
-      <br />
-
-      {/* 🔥 UPI QR SECTION */}
-      {paymentMethod === "upi" && (
-        <div
-          style={{
-            border: "2px solid #ff3f6c",
-            padding: "20px",
-            borderRadius: "12px",
-            background: "#fff",
-            maxWidth: "300px",
-            textAlign: "center",
-          }}
-        >
-          <h4>Scan & Pay</h4>
-
-          <img
-            src={qrImage}
-            alt="QR Code"
-            style={{
-              width: "100%",
-              borderRadius: "10px",
-            }}
-          />
-
-          <p style={{ marginTop: "10px", fontSize: "14px" }}>
-            Scan using PhonePe / GPay / Paytm
-          </p>
-        </div>
-      )}
-
-      <br />
+      <br /><br />
 
       {/* BUTTON */}
       <button
         onClick={handlePlaceOrder}
-        disabled={loading}
+        disabled={!address || loading}
         style={{
-          padding: "10px 20px",
-          background: loading ? "#555" : "#000",
+          width: "100%",
+          padding: "15px",
+          background: (!address || loading) ? "#ccc" : "#ff3f6c",
           color: "#fff",
           border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
+          borderRadius: "8px",
+          cursor: (!address || loading) ? "not-allowed" : "pointer",
+          fontSize: "16px",
+          fontWeight: "bold"
         }}
       >
-        {loading ? "Placing Order..." : "Place Order"}
+        {loading
+          ? "Processing Payment..."
+          : `Confirm & Pay ₹${totalPrice}`}
       </button>
     </div>
   );
